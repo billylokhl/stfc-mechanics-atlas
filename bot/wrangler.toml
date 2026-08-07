@@ -1,0 +1,6 @@
+name = "stfc-mechanic-bot"
+main = "src/worker.js"
+compatibility_date = "2026-01-01"
+
+# Set the Discord application's public key (App settings → General Information):
+#   npx wrangler secret put DISCORD_PUBLIC_KEY

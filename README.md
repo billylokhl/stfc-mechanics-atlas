@@ -27,8 +27,11 @@ with related-topic chips to hop along the graph.
   color, then opens the atlas flown to that star. The 🔗 button in any dossier
   copies the right link.
 - **`data/topics.json`** — machine-readable topic list (name, system, color,
-  TL;DR, links, related topics) for bots and webhooks. A `/mechanic` slash
-  command bot only needs to read this file.
+  TL;DR, links, related topics) for bots and webhooks.
+- **`/mechanic` search bot** — [`bot/`](bot/) contains a ready-to-deploy
+  Cloudflare Worker: type `/mechanic armada` in Discord and pick from a live
+  dropdown of matching topics; the bot posts the topic card with an
+  "Open in Atlas" button. Setup steps in [bot/README.md](bot/README.md).
 - **Mechanic of the Week** — `.github/workflows/mechanic-of-the-week.yml`
   posts one topic every Monday to a Discord channel. To enable it, add a
   repo secret `DISCORD_WEBHOOK_URL` (channel settings → Integrations →
