@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STFC Mechanics Atlas — Concept Demo</title>
+<style>
+  :root{
+    --bg:#05080F; --bg-2:#0A1120; --panel:#0C1526; --line:#1B2A45;
+    --ink:#E9EEF8; --ink-dim:#8FA0BD; --ink-faint:#55658A;
+    --accent:#F2B04A;
+    --c-combat:#4FD8CF; --c-iso:#9D8CFF; --c-status:#FF8A5C; --c-officer:#FFC66B;
+    --c-armada:#FF6BB5; --c-nav:#5BA8FF; --c-econ:#6BDB8C; --c-pvp:#FF5A6E;
+    --display:'Avenir Next Condensed','Helvetica Neue Condensed','Arial Narrow',system-ui,sans-serif;
+    --body:system-ui,-apple-system,'Segoe UI',sans-serif;
+    --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);overflow:hidden}
+  canvas#stars{position:fixed;inset:0;z-index:0}
+  svg#map{position:fixed;inset:0;z-index:1;cursor:grab;touch-action:none}
+  svg#map.dragging{cursor:grabbing}
+
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:5;pointer-events:none;
+    display:flex;align-items:flex-start;justify-content:space-between;
+    padding:18px 22px;gap:16px;
+  }
+  .brand{pointer-events:auto}
+  .brand h1{
+    font-family:var(--display);font-weight:600;font-size:clamp(18px,2.4vw,26px);
+    letter-spacing:.24em;text-transform:uppercase;line-height:1.1;
+  }
+  .brand h1 em{color:var(--accent);font-style:normal}
+  .brand p{
+    font-family:var(--mono);font-size:11px;color:var(--ink-dim);
+    letter-spacing:.08em;margin-top:6px;
+  }
+  .searchbox{pointer-events:auto;position:relative}
+  .searchbox input{
+    width:min(280px,42vw);padding:9px 12px;
+    background:rgba(12,21,38,.85);border:1px solid var(--line);border-radius:4px;
+    color:var(--ink);font-family:var(--mono);font-size:12.5px;letter-spacing:.03em;
+    outline:none;
+  }
+  .searchbox input::placeholder{color:var(--ink-faint)}
+  .searchbox input:focus{border-color:var(--accent)}
+
+  .legend{
+    position:fixed;left:22px;bottom:22px;z-index:5;
+    background:rgba(10,17,32,.82);border:1px solid var(--line);border-radius:6px;
+    padding:12px 14px;max-width:230px;
+  }
+  .legend h2{
+    font-family:var(--display);font-size:11px;font-weight:600;letter-spacing:.28em;
+    text-transform:uppercase;color:var(--ink-dim);margin-bottom:9px;
+  }
+  .legend button{
+    display:flex;align-items:center;gap:8px;width:100%;
+    background:none;border:none;color:var(--ink-dim);cursor:pointer;
+    font-family:var(--body);font-size:12.5px;padding:3px 2px;text-align:left;border-radius:3px;
+  }
+  .legend button:hover,.legend button:focus-visible{color:var(--ink);outline:none}
+  .legend button:focus-visible{box-shadow:0 0 0 1px var(--accent)}
+  .legend .dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .viewbtns{position:fixed;right:22px;bottom:22px;z-index:5;display:flex;gap:8px}
+  .viewbtns button{
+    width:34px;height:34px;border-radius:4px;border:1px solid var(--line);
+    background:rgba(10,17,32,.82);color:var(--ink-dim);font-size:15px;cursor:pointer;
+    font-family:var(--mono);
+  }
+  .viewbtns button:hover{color:var(--ink);border-color:var(--ink-faint)}
+  .viewbtns .reset{width:auto;padding:0 12px;font-size:11px;letter-spacing:.1em}
+
+  .lane{fill:none;stroke-width:1;opacity:.35;transition:opacity .18s,stroke-width .18s}
+  .lane.cross{stroke:var(--accent);stroke-dasharray:3 5;opacity:.3}
+  .lane.lit{opacity:.95;stroke-width:1.8}
+  .lane.dimmed{opacity:.05}
+  .cluster-label{
+    font-family:var(--display);font-weight:600;text-transform:uppercase;
+    letter-spacing:.42em;fill:var(--ink-faint);opacity:.8;pointer-events:none;
+  }
+  .node{cursor:pointer}
+  .node circle.halo{opacity:0;transition:opacity .18s}
+  .node text{
+    font-family:var(--body);font-size:10.5px;fill:var(--ink-dim);
+    pointer-events:none;transition:fill .15s;
+  }
+  .node:hover text,.node.lit text{fill:var(--ink)}
+  .node:hover circle.halo,.node.lit circle.halo{opacity:.45}
+  .node.dimmed{opacity:.15}
+  .node.hit circle.halo{opacity:.7}
+  .node.selected circle.halo{opacity:.9}
+  @media (prefers-reduced-motion:no-preference){
+    .node.hit circle.halo{animation:pulse 1.4s ease-in-out infinite}
+    @keyframes pulse{50%{opacity:.25}}
+  }
+
+  .dossier{
+    position:fixed;top:0;right:0;bottom:0;z-index:6;width:min(400px,100vw);
+    background:linear-gradient(180deg,var(--panel),var(--bg-2));
+    border-left:1px solid var(--line);
+    transform:translateX(102%);transition:transform .28s cubic-bezier(.3,.9,.3,1);
+    display:flex;flex-direction:column;
+  }
+  @media (prefers-reduced-motion:reduce){.dossier{transition:none}}
+  .dossier.open{transform:none;box-shadow:-24px 0 60px rgba(0,0,0,.5)}
+  .dossier-head{position:relative;padding:20px 22px 0;border-bottom:1px solid var(--line)}
+  .dossier-head .sys{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;
+    display:flex;align-items:center;gap:7px;color:var(--ink-dim);
+  }
+  .dossier-head .sys .dot{width:7px;height:7px;border-radius:50%}
+  .dossier-head h3{
+    font-family:var(--display);font-weight:600;font-size:23px;letter-spacing:.05em;
+    margin:8px 36px 14px 0;text-wrap:balance;
+  }
+  .dossier-head button.close{
+    position:absolute;top:14px;right:14px;width:30px;height:30px;
+    background:none;border:1px solid var(--line);border-radius:4px;color:var(--ink-dim);
+    font-size:14px;cursor:pointer;
+  }
+  .dossier-head button.close:hover{color:var(--ink)}
+  .tabs{display:flex;gap:2px}
+  .tabs button{
+    background:none;border:none;border-bottom:2px solid transparent;
+    color:var(--ink-faint);font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+    text-transform:uppercase;padding:8px 10px;cursor:pointer;
+  }
+  .tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+  .tabs button:hover{color:var(--ink)}
+  .dossier-body{padding:18px 22px 26px;overflow-y:auto;flex:1;font-size:14px;line-height:1.62}
+  .dossier-body p{margin-bottom:12px}
+  .dossier-body p.dim{color:var(--ink-dim)}
+  .dossier-body .stub{
+    border:1px dashed var(--line);border-radius:5px;padding:12px 14px;
+    color:var(--ink-dim);font-size:12.5px;margin-top:14px;
+  }
+  .dossier-body h4{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ink-faint);margin:18px 0 8px;
+  }
+  .linkchips{display:flex;flex-wrap:wrap;gap:6px}
+  .linkchips button{
+    background:rgba(27,42,69,.5);border:1px solid var(--line);border-radius:99px;
+    color:var(--ink-dim);font-size:11.5px;padding:4px 11px;cursor:pointer;font-family:var(--body);
+  }
+  .linkchips button:hover{color:var(--ink);border-color:var(--accent)}
+  .formula{
+    font-family:var(--mono);font-size:12.5px;background:rgba(5,8,15,.7);
+    border:1px solid var(--line);border-radius:5px;padding:11px 13px;margin:10px 0;
+    overflow-x:auto;white-space:nowrap;color:var(--ink);
+  }
+  .widget{
+    border:1px solid var(--line);border-radius:6px;padding:14px;margin:14px 0 6px;
+    background:rgba(5,8,15,.55);
+  }
+  .widget label{
+    display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px;
+  }
+  .widget input[type=range]{width:100%;accent-color:var(--accent)}
+  .readout{
+    display:flex;justify-content:space-between;font-family:var(--mono);
+    font-size:12px;margin-top:10px;font-variant-numeric:tabular-nums;color:var(--ink-dim);
+  }
+  .readout b{color:var(--accent);font-weight:600}
+  .bar{height:9px;border-radius:99px;background:#18233C;overflow:hidden;margin-top:6px}
+  .bar i{display:block;height:100%;background:var(--c-combat)}
+
+  @media (max-width:640px){
+    .legend{display:none}
+    .brand p{display:none}
+    .dossier{width:100vw}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<svg id="map" role="application" aria-label="Galaxy map of STFC mechanics topics"></svg>
+
+<header>
+  <div class="brand">
+    <h1>STFC <em>Mechanics</em> Atlas</h1>
+    <p>CONCEPT DEMO · every star is a topic dossier · sample copy only</p>
+  </div>
+  <div class="searchbox">
+    <input id="search" type="search" placeholder="Search mechanics… (Enter to jump)" aria-label="Search topics">
+  </div>
+</header>
+
+<nav class="legend" aria-label="Topic systems">
+  <h2>Systems</h2>
+  <div id="legend-items"></div>
+</nav>
+
+<div class="viewbtns">
+  <button id="zin" aria-label="Zoom in">+</button>
+  <button id="zout" aria-label="Zoom out">−</button>
+  <button id="zreset" class="reset" aria-label="Reset view">RESET</button>
+</div>
+
+<aside class="dossier" id="dossier" aria-hidden="true">
+  <div class="dossier-head">
+    <div class="sys"><span class="dot" id="d-dot"></span><span id="d-sys"></span></div>
+    <h3 id="d-title"></h3>
+    <button class="close" id="d-close" aria-label="Close panel">✕</button>
+    <div class="tabs" role="tablist" id="d-tabs"></div>
+  </div>
+  <div class="dossier-body" id="d-body"></div>
+</aside>
+
+<script>
+'use strict';
+/* ---------------- data ---------------- */
+const CLUSTERS = {
+  combat:{name:'Combat Core',    color:'#4FD8CF', cx:470,  cy:430, lx:470,  ly:255},
+  iso:   {name:'Isolytic & Apex',color:'#9D8CFF', cx:845,  cy:205, lx:845,  ly:95},
+  status:{name:'Status Effects', color:'#FF8A5C', cx:295,  cy:750, lx:295,  ly:625},
+  officer:{name:'Officer Mechanics',color:'#FFC66B',cx:1075,cy:545, lx:1075, ly:400},
+  armada:{name:'Armadas',        color:'#FF6BB5', cx:1345, cy:265, lx:1345, ly:110},
+  nav:   {name:'Galaxy & Travel',color:'#5BA8FF', cx:1275, cy:815, lx:1275, ly:955},
+  econ:  {name:'Ships & Economy',color:'#6BDB8C', cx:790,  cy:865, lx:790,  ly:990},
+  pvp:   {name:'PvP & Loot',     color:'#FF5A6E', cx:160,  cy:215, lx:160,  ly:105},
+};
+const NODES = [
+  {id:'bt',    c:'combat', n:'Battle Triangle', big:1},
+  {id:'mit',   c:'combat', n:'Mitigation & Penetration', big:1},
+  {id:'wvb',   c:'combat', n:'Weapon vs Base Damage'},
+  {id:'crit',  c:'combat', n:'Crit Chance & Damage'},
+  {id:'cfloor',c:'combat', n:'Crit Damage Floor'},
+  {id:'smit',  c:'combat', n:'Shield Mitigation'},
+  {id:'pierce',c:'combat', n:'Piercing Stats'},
+  {id:'hvs',   c:'combat', n:'Hull vs Shield Health'},
+  {id:'shots', c:'combat', n:'Shots & Firing Patterns'},
+  {id:'delay', c:'combat', n:'Weapon Delay'},
+  {id:'rounds',c:'combat', n:'Combat Round Limits'},
+  {id:'isod',  c:'iso', n:'Isolytic Damage & Cascade', big:1},
+  {id:'isodef',c:'iso', n:'Isolytic Defense'},
+  {id:'apex',  c:'iso', n:'Apex Barrier & Shred', big:1},
+  {id:'hb',    c:'status', n:'Hull Breach'},
+  {id:'burn',  c:'status', n:'Burning'},
+  {id:'morale',c:'status', n:'Morale'},
+  {id:'assim', c:'status', n:'Assimilate'},
+  {id:'oscale',c:'officer', n:'Officer Stat Scaling'},
+  {id:'bd',    c:'officer', n:'Below Decks'},
+  {id:'syn',   c:'officer', n:'Officer Synergy'},
+  {id:'trig',  c:'officer', n:'Ability Trigger Order', big:1},
+  {id:'addmul',c:'officer', n:'Additive vs Multiplicative'},
+  {id:'stack', c:'officer', n:'Stat Stacking'},
+  {id:'garm',  c:'armada', n:'Group Armadas'},
+  {id:'sarm',  c:'armada', n:'Solo Armadas'},
+  {id:'farm',  c:'armada', n:'Formation Armadas'},
+  {id:'oarm',  c:'armada', n:'Open Armadas'},
+  {id:'dir',   c:'armada', n:'Armada Directives'},
+  {id:'astart',c:'armada', n:'Start Times'},
+  {id:'around',c:'armada', n:'Armada Round Limits'},
+  {id:'aloot', c:'armada', n:'Loot Distribution'},
+  {id:'supp',  c:'armada', n:'Support-Ship Buffs'},
+  {id:'wrange',c:'nav', n:'Warp Range'},
+  {id:'wspeed',c:'nav', n:'Warp Speed'},
+  {id:'imp',   c:'nav', n:'Impulse Speed'},
+  {id:'token', c:'nav', n:'Token Space'},
+  {id:'haz',   c:'nav', n:'Hazards'},
+  {id:'shw',   c:'nav', n:'Superhighways'},
+  {id:'chase', c:'nav', n:'Chaser Hostiles'},
+  {id:'refit', c:'econ', n:'Refits'},
+  {id:'power', c:'econ', n:'Ship Power vs Performance'},
+  {id:'costs', c:'econ', n:'Cost Reduction vs Efficiency'},
+  {id:'sms',   c:'econ', n:'SMS vs SLB'},
+  {id:'lootb', c:'econ', n:'Loot Bonuses'},
+  {id:'pvpr',  c:'pvp', n:'PvP Level Ranges'},
+  {id:'scoop', c:'pvp', n:'Amalgam & Reaver Scoops'},
+];
+const LINKS = [
+  ['bt','mit'],['mit','pierce'],['mit','smit'],['crit','cfloor'],['wvb','crit'],
+  ['hvs','smit'],['shots','delay'],['shots','rounds'],['wvb','shots'],
+  ['isod','isodef'],['isod','apex'],
+  ['hb','burn'],['morale','assim'],
+  ['oscale','bd'],['syn','trig'],['addmul','stack'],['oscale','stack'],
+  ['garm','sarm'],['farm','oarm'],['dir','garm'],['astart','garm'],['around','sarm'],['aloot','garm'],['supp','garm'],
+  ['wrange','wspeed'],['imp','haz'],['token','wrange'],
+  ['refit','power'],['costs','sms'],
+  ['pvpr','scoop'],
+  // cross-system warp lanes
+  ['mit','apex',1],['mit','isod',1],['isodef','smit',1],
+  ['trig','morale',1],['trig','hb',1],['burn','crit',1],
+  ['addmul','oscale',0],['stack','syn',0],
+  ['supp','mit',1],['aloot','lootb',1],['around','rounds',1],
+  ['power','bt',1],['refit','bt',1],
+  ['wrange','shw',0],['chase','haz',0],['shw','token',0],
+  ['pvpr','lootb',1],['scoop','lootb',1],['sms','lootb',0],
+  ['assim','isod',1],['cfloor','trig',1],
+];
+
+const CONTENT = {
+  mit: {
+    tldr: `Mitigation is the percentage of incoming weapon damage your ship shrugs off before it ever touches shields or hull. Your three defense stats — Armor, Shield Deflection, Dodge — each get tested against the attacker's matching piercing stat. Win the stat duel, take less damage.`,
+    how: `<p>Each defense stat is paired with an attacker piercing stat: Armor vs Armor Piercing, Shield Deflection vs Shield Piercing, Dodge vs Accuracy.</p>
+      <p class="dim">Each pair produces a partial mitigation value; the three combine into total mitigation. The curve has strong diminishing returns — stacking defense far past the attacker's piercing buys very little, which is why piercing officers swing fights so hard.</p>`,
+    math: `<div class="formula">mit ≈ 1 − ∏ (1 − fᵢ)&nbsp;&nbsp;where&nbsp;&nbsp;fᵢ = 1 / (1 + (Pᵢ/Dᵢ)^1.1)</div>
+      <p class="dim">Illustrative curve for the demo — the real page would carry the community-verified formula with test evidence.</p>
+      <div class="widget">
+        <label>Attacker piercing vs your 100K defense</label>
+        <input type="range" id="w-pierce" min="0" max="100" value="50">
+        <div class="readout"><span>Piercing: <b id="w-pval">100K</b></span><span>Mitigation: <b id="w-mval">50%</b></span></div>
+        <div class="bar"><i id="w-bar" style="width:50%"></i></div>
+        <div class="readout"><span>damage absorbed</span><span id="w-dmg">50,000 / 100,000 gets through</span></div>
+      </div>
+      <p class="dim">← This is the "explorable" idea: drag the slider, feel the curve. No wall of text needed.</p>`,
+  },
+  bt: {
+    tldr: `Rock-paper-scissors with warp cores: Battleships beat Explorers, Explorers beat Interceptors, Interceptors beat Battleships. The advantaged class gets a hidden efficiency bonus against its prey — often worth more than raw power.`,
+    how: `<svg viewBox="0 0 300 240" style="width:100%;max-width:300px;display:block;margin:6px auto 14px">
+        <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" fill="#F2B04A"/></marker></defs>
+        <path d="M150 52 L84 178" stroke="#F2B04A" stroke-width="1.5" marker-end="url(#arr)" fill="none"/>
+        <path d="M104 196 L196 196" stroke="#F2B04A" stroke-width="1.5" marker-end="url(#arr)" fill="none"/>
+        <path d="M216 178 L158 62" stroke="#F2B04A" stroke-width="1.5" marker-end="url(#arr)" fill="none"/>
+        <circle cx="150" cy="38" r="26" fill="none" stroke="#4FD8CF" stroke-width="1.5"/>
+        <circle cx="80" cy="196" r="26" fill="none" stroke="#FF6BB5" stroke-width="1.5"/>
+        <circle cx="220" cy="196" r="26" fill="none" stroke="#5BA8FF" stroke-width="1.5"/>
+        <text x="150" y="42" text-anchor="middle" fill="#E9EEF8" font-size="11" font-family="system-ui">BATT</text>
+        <text x="80" y="200" text-anchor="middle" fill="#E9EEF8" font-size="11" font-family="system-ui">EXPL</text>
+        <text x="220" y="200" text-anchor="middle" fill="#E9EEF8" font-size="11" font-family="system-ui">INTC</text>
+      </svg>
+      <p class="dim">Battleships → Explorers → Interceptors → Battleships. The real page would let you tap two classes and see the exact bonus applied.</p>`,
+    math: `<div class="formula">class advantage → bonus efficiency vs opposing stat set</div>
+      <p class="dim">The dossier would document the tested bonus values here, with combat-log evidence linked below.</p>`,
+  },
+  apex: {
+    tldr: `Apex Barrier is late-game damage compression: past a threshold, enormous hits are squeezed down so one-shot alpha strikes stop scaling linearly. Apex Shred is the counter-stat that eats through the barrier.`,
+    how: `<p class="dim">Barrier strength derives from your mitigation profile, which is why it lives one warp lane away from Mitigation & Penetration on this map. Shred vs Barrier is the same duel pattern as piercing vs defense — one layer up.</p>`,
+    math: `<div class="formula">effective damage = f(raw damage, barrier, shred) — sub-linear past threshold</div>
+      <p class="dim">Community-tested curves and combat logs would be linked here as the evidence layer.</p>`,
+  },
+};
+const TLDR = {
+  wvb:'Weapon damage is the rolled per-shot value; base damage is the stat line it rolls from. Buffs that touch one do not always touch the other.',
+  crit:'Crit chance decides how often you spike; crit damage decides how hard. Multiplicative with most other bonuses, which is why crit officers scale so well.',
+  cfloor:'Some effects cannot push crit damage below a floor value — the floor decides whether crit-down debuffs are worth a seat.',
+  smit:'The slice of damage your shields absorb while they are up. Separate from (and multiplied with) overall mitigation.',
+  pierce:'Armor Piercing, Shield Piercing and Accuracy — the attacker-side keys to the three mitigation locks.',
+  hvs:'Two health pools, two repair costs, two sets of buffs. Knowing which pool a hostile actually threatens changes your crew.',
+  shots:'How many shots each weapon fires per round and in what pattern — the rhythm section of every combat log.',
+  delay:'Weapon delay staggers which rounds a weapon fires in. A "slow" heavy weapon may simply be waiting for round 2.',
+  rounds:'Combat resolves in rounds with a hard cap — hit the cap without a kill and the fight ends undecided.',
+  isod:'Isolytic damage rides on top of normal damage and is resisted separately; cascade multiplies it further. The late-game damage economy.',
+  isodef:'The defense stat that specifically blunts isolytic damage — invisible on the power number, decisive in late-game fights.',
+  hb:'Hull Breach makes the target take extra critical damage — the classic setup debuff for burst crews.',
+  burn:'Burning ticks damage each round and enables combos that key off the state. A state, not just a DoT.',
+  morale:'Morale buffs your own ship and unlocks officer combos that require the state — the mirror image of a debuff.',
+  assim:'The Borg specialty state — assimilated targets take modified damage and unlock faction-specific mechanics.',
+  oscale:'Officer stats scale with level, rank and (for some) synergy — the same officer can be weak on one ship, monstrous on another.',
+  bd:'Below-deck officers contribute stats (and some passives) without occupying the bridge. Where "dead" officers become useful.',
+  syn:'Matching captain and bridge factions boosts the captain maneuver — a quiet multiplier most crews leave on the table.',
+  trig:'Abilities resolve in a defined order each round. Two "identical" crews can perform differently purely because of resolution order.',
+  addmul:'Two +20% bonuses can mean +40% or +44% depending on whether they add or multiply. Half of all crew debates come down to this.',
+  stack:'Which bonuses stack with themselves and each other, and which silently overwrite. The fine print of crew-building.',
+  garm:'Multi-player armadas — coordinated fleets share one target and split the spoils.',
+  sarm:'Armada targets sized for one player and their fleet. Same rules, no scheduling headache.',
+  farm:'Formation armadas add positional roles — where you stand matters as much as what you fly.',
+  oarm:'Open armadas let anyone on the server join — loot rules differ from alliance-only runs.',
+  dir:'Directives are the keys that start armadas — earning, storing and spending them is its own economy.',
+  astart:'Start timing affects who can join and when loot windows land — small detail, frequent drama.',
+  around:'Armadas have their own round cap, distinct from normal combat — the reason "we almost had it" happens.',
+  aloot:'How rewards split across participants — contribution, rank and RNG each play a part.',
+  supp:'Support ships buff the fleet without fighting. The buff math interacts with mitigation and officer bonuses.',
+  wrange:'How far your ship can jump in one warp — the hard gate on which systems you can even reach.',
+  wspeed:'How fast you cross the distance — quality of life that compounds over a thousand jumps.',
+  imp:'Sub-light speed inside a system — decides who catches whom in PvP.',
+  token:'Token-gated space — entry costs a consumable, and the meter keeps running while you are inside.',
+  haz:'Hazard systems tick damage on ships that lack the right resistance — gear checks disguised as geography.',
+  shw:'Superhighways move you across the galaxy at a fraction of the cost — if your route touches one.',
+  chase:'Hostiles that pursue you across the system — speed and aggro rules decide whether farming is calm or chaos.',
+  refit:'Refits re-spec an existing hull — same ship, new stat identity.',
+  power:'The power number is a marketing stat. Two ships with equal power can perform wildly differently — this page explains why.',
+  costs:'Cost reduction lowers the sticker price; cost efficiency changes the ratio of output per resource. They are not the same lever.',
+  sms:'Ship Materials vs Ship Loyalty tokens — two upgrade currencies, two very different scarcity curves.',
+  lootb:'Loot bonuses multiply drops — but only from sources they actually apply to. The fine print is the page.',
+  pvpr:'Level brackets decide who may attack whom — and the cliff edges where you suddenly meet much bigger guns.',
+  scoop:'Amalgam and Reaver scoop mechanics — how the grind loops actually pay out, and how to stack the odds.',
+};
+
+/* ---------------- layout ---------------- */
+const W=1600,H=1000;
+const byId={};
+{
+  const groups={};
+  NODES.forEach(n=>{(groups[n.c]=groups[n.c]||[]).push(n)});
+  for(const [cid,list] of Object.entries(groups)){
+    const cl=CLUSTERS[cid], n=list.length;
+    list.forEach((node,i)=>{
+      if(n===1){node.x=cl.cx;node.y=cl.cy;}
+      else{
+        const ang=(i/n)*Math.PI*2 + (cid.length*0.7);
+        const rad=(n>6 ? (i%2? 132:82) : 78+(i%2)*30) + ((i*37)%17);
+        node.x=cl.cx+Math.cos(ang)*rad*1.15;
+        node.y=cl.cy+Math.sin(ang)*rad*0.85;
+      }
+      byId[node.id]=node;
+    });
+  }
+}
+
+/* ---------------- starfield ---------------- */
+const cv=document.getElementById('stars'),cx2=cv.getContext('2d');
+let starsArr=[];
+function seedStars(){
+  cv.width=innerWidth*devicePixelRatio;cv.height=innerHeight*devicePixelRatio;
+  starsArr=Array.from({length:260},(_, i)=>({
+    x:((i*991)%1000)/1000*cv.width, y:((i*757)%1000)/1000*cv.height,
+    r:(0.4+((i*13)%10)/14)*devicePixelRatio, p:(i%628)/100, s:0.5+((i*7)%10)/12
+  }));
+}
+const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function drawStars(t){
+  cx2.clearRect(0,0,cv.width,cv.height);
+  for(const s of starsArr){
+    const tw=reduceMotion?0.75:0.55+0.45*Math.sin(t/900*s+s.p*6);
+    cx2.globalAlpha=0.25+0.55*tw;
+    cx2.fillStyle='#CBD8EF';
+    cx2.beginPath();cx2.arc(s.x,s.y,s.r,0,7);cx2.fill();
+  }
+  if(!reduceMotion)requestAnimationFrame(drawStars);
+}
+seedStars();requestAnimationFrame(drawStars);
+addEventListener('resize',()=>{seedStars();if(reduceMotion)requestAnimationFrame(drawStars)});
+
+/* ---------------- svg build ---------------- */
+const svg=document.getElementById('map');
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){
+  const e=document.createElementNS(NS,tag);
+  for(const k in attrs)e.setAttribute(k,attrs[k]);
+  (parent||svg).appendChild(e);return e;
+}
+const gLanes=el('g',{}),gNodes=el('g',{});
+const laneEls=[];
+for(const [a,b,cross] of LINKS){
+  const A=byId[a],B=byId[b];
+  if(!A||!B)continue;
+  const mx=(A.x+B.x)/2, my=(A.y+B.y)/2;
+  const dx=B.x-A.x, dy=B.y-A.y, len=Math.hypot(dx,dy)||1;
+  const bow=cross?26:10;
+  const cxp=mx-dy/len*bow, cyp=my+dx/len*bow;
+  const p=el('path',{d:`M${A.x} ${A.y} Q${cxp} ${cyp} ${B.x} ${B.y}`,
+    class:'lane'+(cross?' cross':'')},gLanes);
+  if(!cross)p.setAttribute('stroke',CLUSTERS[A.c].color);
+  laneEls.push({p,a,b});
+}
+for(const [cid,cl] of Object.entries(CLUSTERS)){
+  el('text',{x:cl.lx,y:cl.ly,'text-anchor':'middle','font-size':15,class:'cluster-label'},gLanes)
+    .textContent=cl.name;
+}
+const nodeEls={};
+for(const n of NODES){
+  const g=el('g',{class:'node',tabindex:0,role:'button','aria-label':n.n},gNodes);
+  const col=CLUSTERS[n.c].color, r=n.big?7:4.5;
+  el('circle',{cx:n.x,cy:n.y,r:20,fill:'transparent'},g);
+  el('circle',{cx:n.x,cy:n.y,r:r*2.6,fill:col,class:'halo'},g);
+  el('circle',{cx:n.x,cy:n.y,r:r,fill:col,class:'core'},g);
+  const t=el('text',{x:n.x,y:n.y+r+13,'text-anchor':'middle'},g);
+  t.textContent=n.n;
+  g.addEventListener('click',()=>openDossier(n.id));
+  g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDossier(n.id)}});
+  g.addEventListener('mouseenter',()=>highlight(n.id));
+  g.addEventListener('mouseleave',()=>highlight(null));
+  nodeEls[n.id]=g;
+}
+function highlight(id){
+  if(!id){
+    laneEls.forEach(l=>l.p.classList.remove('lit','dimmed'));
+    Object.values(nodeEls).forEach(g=>g.classList.remove('lit','dimmed'));
+    return;
+  }
+  const neigh=new Set([id]);
+  laneEls.forEach(l=>{
+    const on=l.a===id||l.b===id;
+    l.p.classList.toggle('lit',on);l.p.classList.toggle('dimmed',!on);
+    if(on){neigh.add(l.a);neigh.add(l.b)}
+  });
+  for(const [nid,g] of Object.entries(nodeEls)){
+    g.classList.toggle('lit',neigh.has(nid)&&nid!==id);
+    g.classList.toggle('dimmed',!neigh.has(nid));
+  }
+}
+
+/* ---------------- pan & zoom ---------------- */
+let vb={x:0,y:0,w:W,h:H};
+function fitInitial(){
+  const ar=innerWidth/innerHeight, mar=ar>W/H;
+  vb = mar ? {w:H*ar,h:H,x:-(H*ar-W)/2,y:0} : {w:W,h:W/ar,x:0,y:-(W/ar-H)/2};
+  applyVB();
+}
+function applyVB(){svg.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`)}
+function zoomAt(px,py,f){
+  const r=svg.getBoundingClientRect();
+  const mx=vb.x+(px-r.left)/r.width*vb.w, my=vb.y+(py-r.top)/r.height*vb.h;
+  const w=Math.min(Math.max(vb.w*f,300),3200), h=w*vb.h/vb.w;
+  vb={x:mx-(mx-vb.x)*w/vb.w, y:my-(my-vb.y)*h/vb.h, w, h};
+  applyVB();
+}
+svg.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,e.deltaY>0?1.12:0.89)},{passive:false});
+let drag=null;
+svg.addEventListener('pointerdown',e=>{
+  if(e.target.closest('.node'))return;
+  drag={x:e.clientX,y:e.clientY};svg.classList.add('dragging');svg.setPointerCapture(e.pointerId);
+});
+svg.addEventListener('pointermove',e=>{
+  if(!drag)return;
+  const r=svg.getBoundingClientRect();
+  vb.x-=(e.clientX-drag.x)/r.width*vb.w; vb.y-=(e.clientY-drag.y)/r.height*vb.h;
+  drag={x:e.clientX,y:e.clientY};applyVB();
+});
+addEventListener('pointerup',()=>{drag=null;svg.classList.remove('dragging')});
+document.getElementById('zin').onclick=()=>zoomAt(innerWidth/2,innerHeight/2,0.8);
+document.getElementById('zout').onclick=()=>zoomAt(innerWidth/2,innerHeight/2,1.25);
+document.getElementById('zreset').onclick=fitInitial;
+function panTo(x,y,w){
+  vb={x:x-w/2,y:y-(w*vb.h/vb.w)/2,w,h:w*vb.h/vb.w};applyVB();
+}
+fitInitial();
+
+/* ---------------- legend ---------------- */
+{
+  const holder=document.getElementById('legend-items');
+  for(const [cid,cl] of Object.entries(CLUSTERS)){
+    const b=document.createElement('button');
+    b.innerHTML=`<span class="dot" style="background:${cl.color}"></span>${cl.name}`;
+    b.onclick=()=>panTo(cl.cx,cl.cy,620);
+    holder.appendChild(b);
+  }
+}
+
+/* ---------------- dossier ---------------- */
+const dossier=document.getElementById('dossier');
+const dTabs=document.getElementById('d-tabs'), dBody=document.getElementById('d-body');
+let currentId=null;
+function openDossier(id){
+  const n=byId[id];if(!n)return;
+  currentId=id;
+  const cl=CLUSTERS[n.c];
+  document.getElementById('d-dot').style.background=cl.color;
+  document.getElementById('d-sys').textContent=cl.name+' system';
+  document.getElementById('d-title').textContent=n.n;
+  Object.values(nodeEls).forEach(g=>g.classList.remove('selected'));
+  nodeEls[id].classList.add('selected');
+  const c=CONTENT[id];
+  const tabs=c?['TL;DR','How it works','The math']:['TL;DR'];
+  dTabs.innerHTML='';
+  tabs.forEach((t,i)=>{
+    const b=document.createElement('button');
+    b.textContent=t;b.setAttribute('role','tab');
+    b.setAttribute('aria-selected',i===0?'true':'false');
+    b.onclick=()=>{selectTab(id,i)};
+    dTabs.appendChild(b);
+  });
+  selectTab(id,0);
+  dossier.classList.add('open');dossier.setAttribute('aria-hidden','false');
+}
+function neighborsOf(id){
+  const s=new Set();
+  laneEls.forEach(l=>{if(l.a===id)s.add(l.b);if(l.b===id)s.add(l.a)});
+  return [...s];
+}
+function selectTab(id,idx){
+  [...dTabs.children].forEach((b,i)=>b.setAttribute('aria-selected',i===idx?'true':'false'));
+  const c=CONTENT[id];
+  let html='';
+  if(idx===0){
+    const tl=c?c.tldr:(TLDR[id]||'Topic summary goes here.');
+    html=`<p>${tl}</p>`;
+    if(!c)html+=`<div class="stub">Concept demo stub — in the real atlas this dossier gets the full layered treatment: how it works, the math, and linked combat-log evidence.</div>`;
+  }else if(idx===1){html=c.how}
+  else{html=c.math}
+  const nb=neighborsOf(id);
+  if(nb.length){
+    html+=`<h4>Warp lanes — related mechanics</h4><div class="linkchips">`+
+      nb.map(x=>`<button data-jump="${x}">${byId[x].n}</button>`).join('')+`</div>`;
+  }
+  dBody.innerHTML=html;
+  dBody.querySelectorAll('[data-jump]').forEach(b=>{
+    b.onclick=()=>{const t=b.dataset.jump;panTo(byId[t].x,byId[t].y,700);openDossier(t)};
+  });
+  const slider=document.getElementById('w-pierce');
+  if(slider){
+    const D=100000, fmt=v=>v>=1e6?(v/1e6).toFixed(1)+'M':Math.round(v/1000)+'K';
+    const upd=()=>{
+      const P=Math.pow(10,4+slider.value*2/100);
+      const mit=1/(1+Math.pow(P/D,1.1));
+      document.getElementById('w-pval').textContent=fmt(P);
+      document.getElementById('w-mval').textContent=Math.round(mit*100)+'%';
+      document.getElementById('w-bar').style.width=(mit*100)+'%';
+      document.getElementById('w-dmg').textContent=
+        Math.round(100000*(1-mit)).toLocaleString()+' / 100,000 gets through';
+    };
+    slider.addEventListener('input',upd);upd();
+  }
+}
+function closeDossier(){
+  dossier.classList.remove('open');dossier.setAttribute('aria-hidden','true');
+  Object.values(nodeEls).forEach(g=>g.classList.remove('selected'));
+  currentId=null;
+}
+document.getElementById('d-close').onclick=closeDossier;
+addEventListener('keydown',e=>{if(e.key==='Escape')closeDossier()});
+
+/* ---------------- search ---------------- */
+const search=document.getElementById('search');
+search.addEventListener('input',()=>{
+  const q=search.value.trim().toLowerCase();
+  for(const n of NODES){
+    const hit=q&&n.n.toLowerCase().includes(q);
+    nodeEls[n.id].classList.toggle('hit',!!hit);
+    nodeEls[n.id].classList.toggle('dimmed',!!q&&!hit);
+  }
+  if(!q)Object.values(nodeEls).forEach(g=>g.classList.remove('dimmed','hit'));
+});
+search.addEventListener('keydown',e=>{
+  if(e.key!=='Enter'&&e.keyCode!==13)return;
+  const q=search.value.trim().toLowerCase();if(!q)return;
+  const hitNode=NODES.find(n=>n.n.toLowerCase().includes(q));
+  if(hitNode){panTo(hitNode.x,hitNode.y,700);openDossier(hitNode.id)}
+});
+</script>
+</body>
+</html>
