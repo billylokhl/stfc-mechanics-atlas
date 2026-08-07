@@ -1,0 +1,978 @@
+{
+  "site": "https://billylokhl.github.io/stfc-mechanics-atlas/",
+  "generated_from": "index.html",
+  "topics": [
+    {
+      "id": "bt",
+      "slug": "battle-triangle",
+      "name": "Battle Triangle",
+      "system": "Combat Core",
+      "color": "#4FD8CF",
+      "tldr": "Rock-paper-scissors with warp cores: Battleships beat Explorers, Explorers beat Interceptors, Interceptors beat Battleships. The advantaged class gets a hidden efficiency bonus against its prey — often worth more than raw power.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/battle-triangle/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#battle-triangle",
+      "related": [
+        {
+          "name": "Mitigation & Penetration",
+          "slug": "mitigation-and-penetration"
+        },
+        {
+          "name": "Ship Power vs Performance",
+          "slug": "ship-power-vs-performance"
+        },
+        {
+          "name": "Refits",
+          "slug": "refits"
+        }
+      ]
+    },
+    {
+      "id": "mit",
+      "slug": "mitigation-and-penetration",
+      "name": "Mitigation & Penetration",
+      "system": "Combat Core",
+      "color": "#4FD8CF",
+      "tldr": "Mitigation is the percentage of incoming weapon damage your ship shrugs off before it ever touches shields or hull. Your three defense stats — Armor, Shield Deflection, Dodge — each get tested against the attacker's matching piercing stat. Win the stat duel, take less damage.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/mitigation-and-penetration/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#mitigation-and-penetration",
+      "related": [
+        {
+          "name": "Battle Triangle",
+          "slug": "battle-triangle"
+        },
+        {
+          "name": "Piercing Stats",
+          "slug": "piercing-stats"
+        },
+        {
+          "name": "Shield Mitigation",
+          "slug": "shield-mitigation"
+        },
+        {
+          "name": "Apex Barrier & Shred",
+          "slug": "apex-barrier-and-shred"
+        },
+        {
+          "name": "Isolytic Damage & Cascade",
+          "slug": "isolytic-damage-and-cascade"
+        },
+        {
+          "name": "Support-Ship Buffs",
+          "slug": "support-ship-buffs"
+        }
+      ]
+    },
+    {
+      "id": "wvb",
+      "slug": "weapon-vs-base-damage",
+      "name": "Weapon vs Base Damage",
+      "system": "Combat Core",
+      "color": "#4FD8CF",
+      "tldr": "Weapon damage is the rolled per-shot value; base damage is the stat line it rolls from. Buffs that touch one do not always touch the other.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/weapon-vs-base-damage/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#weapon-vs-base-damage",
+      "related": [
+        {
+          "name": "Crit Chance & Damage",
+          "slug": "crit-chance-and-damage"
+        },
+        {
+          "name": "Shots & Firing Patterns",
+          "slug": "shots-and-firing-patterns"
+        }
+      ]
+    },
+    {
+      "id": "crit",
+      "slug": "crit-chance-and-damage",
+      "name": "Crit Chance & Damage",
+      "system": "Combat Core",
+      "color": "#4FD8CF",
+      "tldr": "Crit chance decides how often you spike; crit damage decides how hard. Multiplicative with most other bonuses, which is why crit officers scale so well.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/crit-chance-and-damage/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#crit-chance-and-damage",
+      "related": [
+        {
+          "name": "Crit Damage Floor",
+          "slug": "crit-damage-floor"
+        },
+        {
+          "name": "Weapon vs Base Damage",
+          "slug": "weapon-vs-base-damage"
+        },
+        {
+          "name": "Burning",
+          "slug": "burning"
+        }
+      ]
+    },
+    {
+      "id": "cfloor",
+      "slug": "crit-damage-floor",
+      "name": "Crit Damage Floor",
+      "system": "Combat Core",
+      "color": "#4FD8CF",
+      "tldr": "Some effects cannot push crit damage below a floor value — the floor decides whether crit-down debuffs are worth a seat.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/crit-damage-floor/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#crit-damage-floor",
+      "related": [
+        {
+          "name": "Crit Chance & Damage",
+          "slug": "crit-chance-and-damage"
+        },
+        {
+          "name": "Ability Trigger Order",
+          "slug": "ability-trigger-order"
+        }
+      ]
+    },
+    {
+      "id": "smit",
+      "slug": "shield-mitigation",
+      "name": "Shield Mitigation",
+      "system": "Combat Core",
+      "color": "#4FD8CF",
+      "tldr": "The slice of damage your shields absorb while they are up. Separate from (and multiplied with) overall mitigation.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/shield-mitigation/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#shield-mitigation",
+      "related": [
+        {
+          "name": "Mitigation & Penetration",
+          "slug": "mitigation-and-penetration"
+        },
+        {
+          "name": "Hull vs Shield Health",
+          "slug": "hull-vs-shield-health"
+        },
+        {
+          "name": "Isolytic Defense",
+          "slug": "isolytic-defense"
+        }
+      ]
+    },
+    {
+      "id": "pierce",
+      "slug": "piercing-stats",
+      "name": "Piercing Stats",
+      "system": "Combat Core",
+      "color": "#4FD8CF",
+      "tldr": "Armor Piercing, Shield Piercing and Accuracy — the attacker-side keys to the three mitigation locks.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/piercing-stats/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#piercing-stats",
+      "related": [
+        {
+          "name": "Mitigation & Penetration",
+          "slug": "mitigation-and-penetration"
+        }
+      ]
+    },
+    {
+      "id": "hvs",
+      "slug": "hull-vs-shield-health",
+      "name": "Hull vs Shield Health",
+      "system": "Combat Core",
+      "color": "#4FD8CF",
+      "tldr": "Two health pools, two repair costs, two sets of buffs. Knowing which pool a hostile actually threatens changes your crew.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/hull-vs-shield-health/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#hull-vs-shield-health",
+      "related": [
+        {
+          "name": "Shield Mitigation",
+          "slug": "shield-mitigation"
+        }
+      ]
+    },
+    {
+      "id": "shots",
+      "slug": "shots-and-firing-patterns",
+      "name": "Shots & Firing Patterns",
+      "system": "Combat Core",
+      "color": "#4FD8CF",
+      "tldr": "How many shots each weapon fires per round and in what pattern — the rhythm section of every combat log.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/shots-and-firing-patterns/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#shots-and-firing-patterns",
+      "related": [
+        {
+          "name": "Weapon Delay",
+          "slug": "weapon-delay"
+        },
+        {
+          "name": "Combat Round Limits",
+          "slug": "combat-round-limits"
+        },
+        {
+          "name": "Weapon vs Base Damage",
+          "slug": "weapon-vs-base-damage"
+        }
+      ]
+    },
+    {
+      "id": "delay",
+      "slug": "weapon-delay",
+      "name": "Weapon Delay",
+      "system": "Combat Core",
+      "color": "#4FD8CF",
+      "tldr": "Weapon delay staggers which rounds a weapon fires in. A \"slow\" heavy weapon may simply be waiting for round 2.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/weapon-delay/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#weapon-delay",
+      "related": [
+        {
+          "name": "Shots & Firing Patterns",
+          "slug": "shots-and-firing-patterns"
+        }
+      ]
+    },
+    {
+      "id": "rounds",
+      "slug": "combat-round-limits",
+      "name": "Combat Round Limits",
+      "system": "Combat Core",
+      "color": "#4FD8CF",
+      "tldr": "Combat resolves in rounds with a hard cap — hit the cap without a kill and the fight ends undecided.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/combat-round-limits/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#combat-round-limits",
+      "related": [
+        {
+          "name": "Shots & Firing Patterns",
+          "slug": "shots-and-firing-patterns"
+        },
+        {
+          "name": "Armada Round Limits",
+          "slug": "armada-round-limits"
+        }
+      ]
+    },
+    {
+      "id": "isod",
+      "slug": "isolytic-damage-and-cascade",
+      "name": "Isolytic Damage & Cascade",
+      "system": "Isolytic & Apex",
+      "color": "#9D8CFF",
+      "tldr": "Isolytic damage rides on top of normal damage and is resisted separately; cascade multiplies it further. The late-game damage economy.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/isolytic-damage-and-cascade/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#isolytic-damage-and-cascade",
+      "related": [
+        {
+          "name": "Isolytic Defense",
+          "slug": "isolytic-defense"
+        },
+        {
+          "name": "Apex Barrier & Shred",
+          "slug": "apex-barrier-and-shred"
+        },
+        {
+          "name": "Mitigation & Penetration",
+          "slug": "mitigation-and-penetration"
+        },
+        {
+          "name": "Assimilate",
+          "slug": "assimilate"
+        }
+      ]
+    },
+    {
+      "id": "isodef",
+      "slug": "isolytic-defense",
+      "name": "Isolytic Defense",
+      "system": "Isolytic & Apex",
+      "color": "#9D8CFF",
+      "tldr": "The defense stat that specifically blunts isolytic damage — invisible on the power number, decisive in late-game fights.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/isolytic-defense/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#isolytic-defense",
+      "related": [
+        {
+          "name": "Isolytic Damage & Cascade",
+          "slug": "isolytic-damage-and-cascade"
+        },
+        {
+          "name": "Shield Mitigation",
+          "slug": "shield-mitigation"
+        }
+      ]
+    },
+    {
+      "id": "apex",
+      "slug": "apex-barrier-and-shred",
+      "name": "Apex Barrier & Shred",
+      "system": "Isolytic & Apex",
+      "color": "#9D8CFF",
+      "tldr": "Apex Barrier is late-game damage compression: past a threshold, enormous hits are squeezed down so one-shot alpha strikes stop scaling linearly. Apex Shred is the counter-stat that eats through the barrier.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/apex-barrier-and-shred/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#apex-barrier-and-shred",
+      "related": [
+        {
+          "name": "Isolytic Damage & Cascade",
+          "slug": "isolytic-damage-and-cascade"
+        },
+        {
+          "name": "Mitigation & Penetration",
+          "slug": "mitigation-and-penetration"
+        }
+      ]
+    },
+    {
+      "id": "hb",
+      "slug": "hull-breach",
+      "name": "Hull Breach",
+      "system": "Status Effects",
+      "color": "#FF8A5C",
+      "tldr": "Hull Breach makes the target take extra critical damage — the classic setup debuff for burst crews.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/hull-breach/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#hull-breach",
+      "related": [
+        {
+          "name": "Burning",
+          "slug": "burning"
+        },
+        {
+          "name": "Ability Trigger Order",
+          "slug": "ability-trigger-order"
+        }
+      ]
+    },
+    {
+      "id": "burn",
+      "slug": "burning",
+      "name": "Burning",
+      "system": "Status Effects",
+      "color": "#FF8A5C",
+      "tldr": "Burning ticks damage each round and enables combos that key off the state. A state, not just a DoT.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/burning/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#burning",
+      "related": [
+        {
+          "name": "Hull Breach",
+          "slug": "hull-breach"
+        },
+        {
+          "name": "Crit Chance & Damage",
+          "slug": "crit-chance-and-damage"
+        }
+      ]
+    },
+    {
+      "id": "morale",
+      "slug": "morale",
+      "name": "Morale",
+      "system": "Status Effects",
+      "color": "#FF8A5C",
+      "tldr": "Morale buffs your own ship and unlocks officer combos that require the state — the mirror image of a debuff.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/morale/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#morale",
+      "related": [
+        {
+          "name": "Assimilate",
+          "slug": "assimilate"
+        },
+        {
+          "name": "Ability Trigger Order",
+          "slug": "ability-trigger-order"
+        }
+      ]
+    },
+    {
+      "id": "assim",
+      "slug": "assimilate",
+      "name": "Assimilate",
+      "system": "Status Effects",
+      "color": "#FF8A5C",
+      "tldr": "The Borg specialty state — assimilated targets take modified damage and unlock faction-specific mechanics.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/assimilate/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#assimilate",
+      "related": [
+        {
+          "name": "Morale",
+          "slug": "morale"
+        },
+        {
+          "name": "Isolytic Damage & Cascade",
+          "slug": "isolytic-damage-and-cascade"
+        }
+      ]
+    },
+    {
+      "id": "oscale",
+      "slug": "officer-stat-scaling",
+      "name": "Officer Stat Scaling",
+      "system": "Officer Mechanics",
+      "color": "#FFC66B",
+      "tldr": "Officer stats scale with level, rank and (for some) synergy — the same officer can be weak on one ship, monstrous on another.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/officer-stat-scaling/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#officer-stat-scaling",
+      "related": [
+        {
+          "name": "Below Decks",
+          "slug": "below-decks"
+        },
+        {
+          "name": "Stat Stacking",
+          "slug": "stat-stacking"
+        },
+        {
+          "name": "Additive vs Multiplicative",
+          "slug": "additive-vs-multiplicative"
+        }
+      ]
+    },
+    {
+      "id": "bd",
+      "slug": "below-decks",
+      "name": "Below Decks",
+      "system": "Officer Mechanics",
+      "color": "#FFC66B",
+      "tldr": "Below-deck officers contribute stats (and some passives) without occupying the bridge. Where \"dead\" officers become useful.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/below-decks/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#below-decks",
+      "related": [
+        {
+          "name": "Officer Stat Scaling",
+          "slug": "officer-stat-scaling"
+        }
+      ]
+    },
+    {
+      "id": "syn",
+      "slug": "officer-synergy",
+      "name": "Officer Synergy",
+      "system": "Officer Mechanics",
+      "color": "#FFC66B",
+      "tldr": "Matching captain and bridge factions boosts the captain maneuver — a quiet multiplier most crews leave on the table.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/officer-synergy/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#officer-synergy",
+      "related": [
+        {
+          "name": "Ability Trigger Order",
+          "slug": "ability-trigger-order"
+        },
+        {
+          "name": "Stat Stacking",
+          "slug": "stat-stacking"
+        }
+      ]
+    },
+    {
+      "id": "trig",
+      "slug": "ability-trigger-order",
+      "name": "Ability Trigger Order",
+      "system": "Officer Mechanics",
+      "color": "#FFC66B",
+      "tldr": "Abilities resolve in a defined order each round. Two \"identical\" crews can perform differently purely because of resolution order.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/ability-trigger-order/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#ability-trigger-order",
+      "related": [
+        {
+          "name": "Officer Synergy",
+          "slug": "officer-synergy"
+        },
+        {
+          "name": "Morale",
+          "slug": "morale"
+        },
+        {
+          "name": "Hull Breach",
+          "slug": "hull-breach"
+        },
+        {
+          "name": "Crit Damage Floor",
+          "slug": "crit-damage-floor"
+        }
+      ]
+    },
+    {
+      "id": "addmul",
+      "slug": "additive-vs-multiplicative",
+      "name": "Additive vs Multiplicative",
+      "system": "Officer Mechanics",
+      "color": "#FFC66B",
+      "tldr": "Two +20% bonuses can mean +40% or +44% depending on whether they add or multiply. Half of all crew debates come down to this.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/additive-vs-multiplicative/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#additive-vs-multiplicative",
+      "related": [
+        {
+          "name": "Stat Stacking",
+          "slug": "stat-stacking"
+        },
+        {
+          "name": "Officer Stat Scaling",
+          "slug": "officer-stat-scaling"
+        }
+      ]
+    },
+    {
+      "id": "stack",
+      "slug": "stat-stacking",
+      "name": "Stat Stacking",
+      "system": "Officer Mechanics",
+      "color": "#FFC66B",
+      "tldr": "Which bonuses stack with themselves and each other, and which silently overwrite. The fine print of crew-building.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/stat-stacking/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#stat-stacking",
+      "related": [
+        {
+          "name": "Additive vs Multiplicative",
+          "slug": "additive-vs-multiplicative"
+        },
+        {
+          "name": "Officer Stat Scaling",
+          "slug": "officer-stat-scaling"
+        },
+        {
+          "name": "Officer Synergy",
+          "slug": "officer-synergy"
+        }
+      ]
+    },
+    {
+      "id": "garm",
+      "slug": "group-armadas",
+      "name": "Group Armadas",
+      "system": "Armadas",
+      "color": "#FF6BB5",
+      "tldr": "Multi-player armadas — coordinated fleets share one target and split the spoils.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/group-armadas/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#group-armadas",
+      "related": [
+        {
+          "name": "Solo Armadas",
+          "slug": "solo-armadas"
+        },
+        {
+          "name": "Armada Directives",
+          "slug": "armada-directives"
+        },
+        {
+          "name": "Start Times",
+          "slug": "start-times"
+        },
+        {
+          "name": "Loot Distribution",
+          "slug": "loot-distribution"
+        },
+        {
+          "name": "Support-Ship Buffs",
+          "slug": "support-ship-buffs"
+        }
+      ]
+    },
+    {
+      "id": "sarm",
+      "slug": "solo-armadas",
+      "name": "Solo Armadas",
+      "system": "Armadas",
+      "color": "#FF6BB5",
+      "tldr": "Armada targets sized for one player and their fleet. Same rules, no scheduling headache.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/solo-armadas/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#solo-armadas",
+      "related": [
+        {
+          "name": "Group Armadas",
+          "slug": "group-armadas"
+        },
+        {
+          "name": "Armada Round Limits",
+          "slug": "armada-round-limits"
+        }
+      ]
+    },
+    {
+      "id": "farm",
+      "slug": "formation-armadas",
+      "name": "Formation Armadas",
+      "system": "Armadas",
+      "color": "#FF6BB5",
+      "tldr": "Formation armadas add positional roles — where you stand matters as much as what you fly.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/formation-armadas/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#formation-armadas",
+      "related": [
+        {
+          "name": "Open Armadas",
+          "slug": "open-armadas"
+        }
+      ]
+    },
+    {
+      "id": "oarm",
+      "slug": "open-armadas",
+      "name": "Open Armadas",
+      "system": "Armadas",
+      "color": "#FF6BB5",
+      "tldr": "Open armadas let anyone on the server join — loot rules differ from alliance-only runs.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/open-armadas/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#open-armadas",
+      "related": [
+        {
+          "name": "Formation Armadas",
+          "slug": "formation-armadas"
+        }
+      ]
+    },
+    {
+      "id": "dir",
+      "slug": "armada-directives",
+      "name": "Armada Directives",
+      "system": "Armadas",
+      "color": "#FF6BB5",
+      "tldr": "Directives are the keys that start armadas — earning, storing and spending them is its own economy.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/armada-directives/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#armada-directives",
+      "related": [
+        {
+          "name": "Group Armadas",
+          "slug": "group-armadas"
+        }
+      ]
+    },
+    {
+      "id": "astart",
+      "slug": "start-times",
+      "name": "Start Times",
+      "system": "Armadas",
+      "color": "#FF6BB5",
+      "tldr": "Start timing affects who can join and when loot windows land — small detail, frequent drama.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/start-times/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#start-times",
+      "related": [
+        {
+          "name": "Group Armadas",
+          "slug": "group-armadas"
+        }
+      ]
+    },
+    {
+      "id": "around",
+      "slug": "armada-round-limits",
+      "name": "Armada Round Limits",
+      "system": "Armadas",
+      "color": "#FF6BB5",
+      "tldr": "Armadas have their own round cap, distinct from normal combat — the reason \"we almost had it\" happens.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/armada-round-limits/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#armada-round-limits",
+      "related": [
+        {
+          "name": "Solo Armadas",
+          "slug": "solo-armadas"
+        },
+        {
+          "name": "Combat Round Limits",
+          "slug": "combat-round-limits"
+        }
+      ]
+    },
+    {
+      "id": "aloot",
+      "slug": "loot-distribution",
+      "name": "Loot Distribution",
+      "system": "Armadas",
+      "color": "#FF6BB5",
+      "tldr": "How rewards split across participants — contribution, rank and RNG each play a part.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/loot-distribution/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#loot-distribution",
+      "related": [
+        {
+          "name": "Group Armadas",
+          "slug": "group-armadas"
+        },
+        {
+          "name": "Loot Bonuses",
+          "slug": "loot-bonuses"
+        }
+      ]
+    },
+    {
+      "id": "supp",
+      "slug": "support-ship-buffs",
+      "name": "Support-Ship Buffs",
+      "system": "Armadas",
+      "color": "#FF6BB5",
+      "tldr": "Support ships buff the fleet without fighting. The buff math interacts with mitigation and officer bonuses.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/support-ship-buffs/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#support-ship-buffs",
+      "related": [
+        {
+          "name": "Group Armadas",
+          "slug": "group-armadas"
+        },
+        {
+          "name": "Mitigation & Penetration",
+          "slug": "mitigation-and-penetration"
+        }
+      ]
+    },
+    {
+      "id": "wrange",
+      "slug": "warp-range",
+      "name": "Warp Range",
+      "system": "Galaxy & Travel",
+      "color": "#5BA8FF",
+      "tldr": "How far your ship can jump in one warp — the hard gate on which systems you can even reach.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/warp-range/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#warp-range",
+      "related": [
+        {
+          "name": "Warp Speed",
+          "slug": "warp-speed"
+        },
+        {
+          "name": "Token Space",
+          "slug": "token-space"
+        },
+        {
+          "name": "Superhighways",
+          "slug": "superhighways"
+        }
+      ]
+    },
+    {
+      "id": "wspeed",
+      "slug": "warp-speed",
+      "name": "Warp Speed",
+      "system": "Galaxy & Travel",
+      "color": "#5BA8FF",
+      "tldr": "How fast you cross the distance — quality of life that compounds over a thousand jumps.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/warp-speed/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#warp-speed",
+      "related": [
+        {
+          "name": "Warp Range",
+          "slug": "warp-range"
+        }
+      ]
+    },
+    {
+      "id": "imp",
+      "slug": "impulse-speed",
+      "name": "Impulse Speed",
+      "system": "Galaxy & Travel",
+      "color": "#5BA8FF",
+      "tldr": "Sub-light speed inside a system — decides who catches whom in PvP.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/impulse-speed/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#impulse-speed",
+      "related": [
+        {
+          "name": "Hazards",
+          "slug": "hazards"
+        }
+      ]
+    },
+    {
+      "id": "token",
+      "slug": "token-space",
+      "name": "Token Space",
+      "system": "Galaxy & Travel",
+      "color": "#5BA8FF",
+      "tldr": "Token-gated space — entry costs a consumable, and the meter keeps running while you are inside.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/token-space/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#token-space",
+      "related": [
+        {
+          "name": "Warp Range",
+          "slug": "warp-range"
+        },
+        {
+          "name": "Superhighways",
+          "slug": "superhighways"
+        }
+      ]
+    },
+    {
+      "id": "haz",
+      "slug": "hazards",
+      "name": "Hazards",
+      "system": "Galaxy & Travel",
+      "color": "#5BA8FF",
+      "tldr": "Hazard systems tick damage on ships that lack the right resistance — gear checks disguised as geography.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/hazards/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#hazards",
+      "related": [
+        {
+          "name": "Impulse Speed",
+          "slug": "impulse-speed"
+        },
+        {
+          "name": "Chaser Hostiles",
+          "slug": "chaser-hostiles"
+        }
+      ]
+    },
+    {
+      "id": "shw",
+      "slug": "superhighways",
+      "name": "Superhighways",
+      "system": "Galaxy & Travel",
+      "color": "#5BA8FF",
+      "tldr": "Superhighways move you across the galaxy at a fraction of the cost — if your route touches one.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/superhighways/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#superhighways",
+      "related": [
+        {
+          "name": "Warp Range",
+          "slug": "warp-range"
+        },
+        {
+          "name": "Token Space",
+          "slug": "token-space"
+        }
+      ]
+    },
+    {
+      "id": "chase",
+      "slug": "chaser-hostiles",
+      "name": "Chaser Hostiles",
+      "system": "Galaxy & Travel",
+      "color": "#5BA8FF",
+      "tldr": "Hostiles that pursue you across the system — speed and aggro rules decide whether farming is calm or chaos.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/chaser-hostiles/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#chaser-hostiles",
+      "related": [
+        {
+          "name": "Hazards",
+          "slug": "hazards"
+        }
+      ]
+    },
+    {
+      "id": "refit",
+      "slug": "refits",
+      "name": "Refits",
+      "system": "Ships & Economy",
+      "color": "#6BDB8C",
+      "tldr": "Refits re-spec an existing hull — same ship, new stat identity.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/refits/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#refits",
+      "related": [
+        {
+          "name": "Ship Power vs Performance",
+          "slug": "ship-power-vs-performance"
+        },
+        {
+          "name": "Battle Triangle",
+          "slug": "battle-triangle"
+        }
+      ]
+    },
+    {
+      "id": "power",
+      "slug": "ship-power-vs-performance",
+      "name": "Ship Power vs Performance",
+      "system": "Ships & Economy",
+      "color": "#6BDB8C",
+      "tldr": "The power number is a marketing stat. Two ships with equal power can perform wildly differently — this page explains why.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/ship-power-vs-performance/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#ship-power-vs-performance",
+      "related": [
+        {
+          "name": "Refits",
+          "slug": "refits"
+        },
+        {
+          "name": "Battle Triangle",
+          "slug": "battle-triangle"
+        }
+      ]
+    },
+    {
+      "id": "costs",
+      "slug": "cost-reduction-vs-efficiency",
+      "name": "Cost Reduction vs Efficiency",
+      "system": "Ships & Economy",
+      "color": "#6BDB8C",
+      "tldr": "Cost reduction lowers the sticker price; cost efficiency changes the ratio of output per resource. They are not the same lever.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/cost-reduction-vs-efficiency/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#cost-reduction-vs-efficiency",
+      "related": [
+        {
+          "name": "SMS vs SLB",
+          "slug": "sms-vs-slb"
+        }
+      ]
+    },
+    {
+      "id": "sms",
+      "slug": "sms-vs-slb",
+      "name": "SMS vs SLB",
+      "system": "Ships & Economy",
+      "color": "#6BDB8C",
+      "tldr": "Ship Materials vs Ship Loyalty tokens — two upgrade currencies, two very different scarcity curves.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/sms-vs-slb/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#sms-vs-slb",
+      "related": [
+        {
+          "name": "Cost Reduction vs Efficiency",
+          "slug": "cost-reduction-vs-efficiency"
+        },
+        {
+          "name": "Loot Bonuses",
+          "slug": "loot-bonuses"
+        }
+      ]
+    },
+    {
+      "id": "lootb",
+      "slug": "loot-bonuses",
+      "name": "Loot Bonuses",
+      "system": "Ships & Economy",
+      "color": "#6BDB8C",
+      "tldr": "Loot bonuses multiply drops — but only from sources they actually apply to. The fine print is the page.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/loot-bonuses/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#loot-bonuses",
+      "related": [
+        {
+          "name": "Loot Distribution",
+          "slug": "loot-distribution"
+        },
+        {
+          "name": "PvP Level Ranges",
+          "slug": "pvp-level-ranges"
+        },
+        {
+          "name": "Amalgam & Reaver Scoops",
+          "slug": "amalgam-and-reaver-scoops"
+        },
+        {
+          "name": "SMS vs SLB",
+          "slug": "sms-vs-slb"
+        }
+      ]
+    },
+    {
+      "id": "pvpr",
+      "slug": "pvp-level-ranges",
+      "name": "PvP Level Ranges",
+      "system": "PvP & Loot",
+      "color": "#FF5A6E",
+      "tldr": "Level brackets decide who may attack whom — and the cliff edges where you suddenly meet much bigger guns.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/pvp-level-ranges/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#pvp-level-ranges",
+      "related": [
+        {
+          "name": "Amalgam & Reaver Scoops",
+          "slug": "amalgam-and-reaver-scoops"
+        },
+        {
+          "name": "Loot Bonuses",
+          "slug": "loot-bonuses"
+        }
+      ]
+    },
+    {
+      "id": "scoop",
+      "slug": "amalgam-and-reaver-scoops",
+      "name": "Amalgam & Reaver Scoops",
+      "system": "PvP & Loot",
+      "color": "#FF5A6E",
+      "tldr": "Amalgam and Reaver scoop mechanics — how the grind loops actually pay out, and how to stack the odds.",
+      "url": "https://billylokhl.github.io/stfc-mechanics-atlas/t/amalgam-and-reaver-scoops/",
+      "atlasUrl": "https://billylokhl.github.io/stfc-mechanics-atlas/#amalgam-and-reaver-scoops",
+      "related": [
+        {
+          "name": "PvP Level Ranges",
+          "slug": "pvp-level-ranges"
+        },
+        {
+          "name": "Loot Bonuses",
+          "slug": "loot-bonuses"
+        }
+      ]
+    }
+  ]
+}

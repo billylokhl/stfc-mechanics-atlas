@@ -1,0 +1,42 @@
+name: Mechanic of the Week
+
+# Posts one topic per week to a Discord channel via webhook.
+# Setup: repo Settings → Secrets and variables → Actions → new secret
+#   DISCORD_WEBHOOK_URL = the webhook URL from your Discord channel
+#   (channel settings → Integrations → Webhooks → New Webhook → Copy URL).
+# Does nothing (exits green) until the secret is configured.
+
+on:
+  schedule:
+    - cron: '0 13 * * 1'   # Mondays 13:00 UTC
+  workflow_dispatch: {}     # allow manual test runs from the Actions tab
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Post this week's topic to Discord
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          if [ -z "$WEBHOOK" ]; then
+            echo "DISCORD_WEBHOOK_URL secret not set — skipping."
+            exit 0
+          fi
+          count=$(jq '.topics | length' data/topics.json)
+          week=$(date +%V | sed 's/^0//')
+          idx=$(( week % count ))
+          jq -c --argjson i "$idx" '
+            .topics[$i] as $t |
+            {embeds: [{
+              title: ("Mechanic of the Week: " + $t.name),
+              description: $t.tldr,
+              url: $t.url,
+              color: ($t.color[1:] | ascii_downcase | explode
+                      | map(if . >= 97 then . - 87 else . - 48 end)
+                      | reduce .[] as $d (0; . * 16 + $d)),
+              footer: {text: ($t.system + " · STFC Mechanics Atlas")}
+            }]}' data/topics.json > payload.json
+          curl -sf -H 'Content-Type: application/json' -d @payload.json "$WEBHOOK"
+          echo "Posted topic #$idx"

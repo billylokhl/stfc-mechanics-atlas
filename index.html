@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>STFC Mechanics Atlas — Concept Demo</title>
+<meta name="description" content="A galaxy map of Star Trek Fleet Command game mechanics. Every mechanic is a star; warp lanes connect related topics; each star opens a layered dossier.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="STFC Mechanics Atlas">
+<meta property="og:title" content="STFC Mechanics Atlas — a galaxy map of game mechanics">
+<meta property="og:description" content="Every mechanic is a star. Warp lanes connect related topics. Tap a star for the TL;DR, the deep dive, and the math.">
+<meta property="og:image" content="https://billylokhl.github.io/stfc-mechanics-atlas/assets/og-card.png">
+<meta property="og:url" content="https://billylokhl.github.io/stfc-mechanics-atlas/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F2B04A">
 <style>
   :root{
     --bg:#05080F; --bg-2:#0A1120; --panel:#0C1526; --line:#1B2A45;
@@ -121,12 +130,15 @@
     font-family:var(--display);font-weight:600;font-size:23px;letter-spacing:.05em;
     margin:8px 36px 14px 0;text-wrap:balance;
   }
-  .dossier-head button.close{
-    position:absolute;top:14px;right:14px;width:30px;height:30px;
+  .dossier-head button.hbtn{
+    position:absolute;top:14px;width:30px;height:30px;
     background:none;border:1px solid var(--line);border-radius:4px;color:var(--ink-dim);
     font-size:14px;cursor:pointer;
   }
-  .dossier-head button.close:hover{color:var(--ink)}
+  .dossier-head button.hbtn:hover{color:var(--ink)}
+  .dossier-head button.close{right:14px}
+  .dossier-head button.share{right:52px;font-size:12px}
+  .dossier-head button.share.copied{color:var(--accent);border-color:var(--accent)}
   .tabs{display:flex;gap:2px}
   .tabs button{
     background:none;border:none;border-bottom:2px solid transparent;
@@ -231,7 +243,8 @@
   <div class="dossier-head">
     <div class="sys"><span class="dot" id="d-dot"></span><span id="d-sys"></span></div>
     <h3 id="d-title"></h3>
-    <button class="close" id="d-close" aria-label="Close panel">✕</button>
+    <button class="hbtn share" id="d-share" aria-label="Copy link to this topic" title="Copy link">🔗</button>
+    <button class="hbtn close" id="d-close" aria-label="Close panel">✕</button>
     <div class="tabs" role="tablist" id="d-tabs"></div>
   </div>
   <div class="dossier-body" id="d-body"></div>
@@ -410,7 +423,9 @@ const TLDR = {
 
 /* ---------------- layout ---------------- */
 const W=1600,H=1000;
-const byId={};
+const byId={},bySlug={};
+const slugOf=name=>name.toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+NODES.forEach(n=>{n.slug=slugOf(n.n);bySlug[n.slug]=n;});
 {
   const groups={};
   NODES.forEach(n=>{(groups[n.c]=groups[n.c]||[]).push(n)});
@@ -451,7 +466,12 @@ function drawStars(t){
   if(!reduceMotion)requestAnimationFrame(drawStars);
 }
 seedStars();requestAnimationFrame(drawStars);
-addEventListener('resize',()=>{seedStars();updateLabels();if(reduceMotion)requestAnimationFrame(drawStars)});
+addEventListener('resize',()=>{
+  seedStars();
+  if(typeof vb!=='undefined'&&!isFinite(vb.h))fitInitial(); // recover from 0-size load
+  updateLabels();
+  if(reduceMotion)requestAnimationFrame(drawStars);
+});
 
 /* ---------------- svg build ---------------- */
 const svg=document.getElementById('map');
@@ -514,8 +534,11 @@ function highlight(id){
 
 /* ---------------- pan & zoom ---------------- */
 let vb={x:0,y:0,w:W,h:H};
+/* innerWidth/Height can be 0 while an embedding iframe (Discord, preview
+   panes) is still sizing — fall back so the viewport math never goes NaN */
+const winW=()=>innerWidth||1280, winH=()=>innerHeight||800;
 function fitInitial(){
-  const ar=innerWidth/innerHeight, mar=ar>W/H;
+  const ar=winW()/winH(), mar=ar>W/H;
   vb = mar ? {w:H*ar,h:H,x:-(H*ar-W)/2,y:0} : {w:W,h:W/ar,x:0,y:-(W/ar-H)/2};
   applyVB();
 }
@@ -582,8 +605,9 @@ document.getElementById('zin').onclick=()=>zoomAt(innerWidth/2,innerHeight/2,0.8
 document.getElementById('zout').onclick=()=>zoomAt(innerWidth/2,innerHeight/2,1.25);
 document.getElementById('zreset').onclick=fitInitial;
 function panTo(x,y,w){
-  if(innerWidth<640)w=Math.min(w,430); // zoom in closer on phones so labels are readable
-  vb={x:x-w/2,y:y-(w*vb.h/vb.w)/2,w,h:w*vb.h/vb.w};applyVB();
+  if(winW()<640)w=Math.min(w,430); // zoom in closer on phones so labels are readable
+  const ratio=isFinite(vb.h/vb.w)&&vb.w>0?vb.h/vb.w:winH()/winW();
+  vb={x:x-w/2,y:y-(w*ratio)/2,w,h:w*ratio};applyVB();
 }
 fitInitial();
 
@@ -623,6 +647,7 @@ function openDossier(id){
   });
   selectTab(id,0);
   dossier.classList.add('open');dossier.setAttribute('aria-hidden','false');
+  history.replaceState(null,'','#'+n.slug);
 }
 function neighborsOf(id){
   const s=new Set();
@@ -667,9 +692,35 @@ function closeDossier(){
   dossier.classList.remove('open');dossier.setAttribute('aria-hidden','true');
   Object.values(nodeEls).forEach(g=>g.classList.remove('selected'));
   currentId=null;
+  history.replaceState(null,'',location.pathname+location.search);
 }
 document.getElementById('d-close').onclick=closeDossier;
 addEventListener('keydown',e=>{if(e.key==='Escape')closeDossier()});
+
+/* deep links: #<slug> opens a topic; the share button copies a link that
+   unfurls with topic-specific OG tags when served from GitHub Pages */
+function shareUrl(n){
+  if(location.hostname.endsWith('github.io')){
+    const base=location.pathname.replace(/[^/]*$/,'');
+    return location.origin+base+'t/'+n.slug+'/';
+  }
+  return location.origin+location.pathname+location.search+'#'+n.slug;
+}
+document.getElementById('d-share').onclick=e=>{
+  const n=byId[currentId];if(!n)return;
+  const btn=e.currentTarget;
+  navigator.clipboard.writeText(shareUrl(n)).then(()=>{
+    btn.classList.add('copied');btn.textContent='✓';
+    setTimeout(()=>{btn.classList.remove('copied');btn.textContent='🔗'},1300);
+  });
+};
+function openFromHash(){
+  const h=decodeURIComponent(location.hash.slice(1));if(!h)return;
+  const n=bySlug[h]||byId[h];if(!n)return;
+  panTo(n.x,n.y,700);openDossier(n.id);
+}
+addEventListener('hashchange',openFromHash);
+openFromHash();
 
 /* ---------------- search ---------------- */
 const search=document.getElementById('search');

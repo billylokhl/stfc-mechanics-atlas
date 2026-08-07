@@ -19,6 +19,32 @@ with related-topic chips to hop along the graph.
 - **Search** for a mechanic and press Enter to jump to it
 - Use the **Systems** legend to fly to a cluster; scroll to zoom, drag to pan
 
+## Discord integration
+
+- **Deep links** — every topic has a URL. Share
+  `…/t/<slug>/` (e.g. [`t/mitigation-and-penetration/`](https://billylokhl.github.io/stfc-mechanics-atlas/t/mitigation-and-penetration/))
+  in Discord and it unfurls as a rich card with the topic's TL;DR and system
+  color, then opens the atlas flown to that star. The 🔗 button in any dossier
+  copies the right link.
+- **`data/topics.json`** — machine-readable topic list (name, system, color,
+  TL;DR, links, related topics) for bots and webhooks. A `/mechanic` slash
+  command bot only needs to read this file.
+- **Mechanic of the Week** — `.github/workflows/mechanic-of-the-week.yml`
+  posts one topic every Monday to a Discord channel. To enable it, add a
+  repo secret `DISCORD_WEBHOOK_URL` (channel settings → Integrations →
+  Webhooks). It skips silently until the secret exists; test with the
+  "Run workflow" button in the Actions tab.
+
+### Rebuilding after content edits
+
+Topic data lives in `index.html`. After editing it, regenerate the stub
+pages, `topics.json`, and (if branding changed) the embed card:
+
+```bash
+node scripts/build_discord.mjs
+python3 scripts/make_og_card.py
+```
+
 ## Caveats
 
 - All topic copy is **illustrative sample text**, not verified game math
