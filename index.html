@@ -80,7 +80,12 @@
   .cluster-label{
     font-family:var(--display);font-weight:600;text-transform:uppercase;
     letter-spacing:.42em;fill:var(--ink-faint);opacity:.8;pointer-events:none;
+    font-size:var(--clusterfs,15px);
   }
+  .node circle.hit{r:var(--hitr,20px)}
+  .node.big text{font-size:var(--bigfs,10.5px)}
+  .zoomed-out .node:not(.big) text{display:none}
+  .zoomed-out .node.big text{fill:var(--ink)}
   .node{cursor:pointer}
   .node circle.halo{opacity:0;transition:opacity .18s}
   .node text{
@@ -170,9 +175,29 @@
   .bar i{display:block;height:100%;background:var(--c-combat)}
 
   @media (max-width:640px){
-    .legend{display:none}
     .brand p{display:none}
-    .dossier{width:100vw}
+    header{padding:12px 14px}
+    /* legend becomes a horizontal chip bar along the bottom */
+    .legend{
+      left:0;right:0;bottom:0;max-width:none;border-radius:0;
+      border-left:none;border-right:none;border-bottom:none;
+      padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+    }
+    .legend h2{display:none}
+    #legend-items{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .legend button{
+      width:auto;white-space:nowrap;flex:none;
+      border:1px solid var(--line);border-radius:99px;padding:6px 11px;
+    }
+    .viewbtns{bottom:calc(62px + env(safe-area-inset-bottom));right:12px}
+    /* dossier becomes a bottom sheet so the map stays in view */
+    .dossier{
+      top:auto;height:76dvh;width:100vw;
+      border-left:none;border-top:1px solid var(--line);
+      border-radius:14px 14px 0 0;
+      transform:translateY(105%);
+    }
+    .dossier.open{transform:none;box-shadow:0 -18px 50px rgba(0,0,0,.55)}
   }
 </style>
 </head>
@@ -426,7 +451,7 @@ function drawStars(t){
   if(!reduceMotion)requestAnimationFrame(drawStars);
 }
 seedStars();requestAnimationFrame(drawStars);
-addEventListener('resize',()=>{seedStars();if(reduceMotion)requestAnimationFrame(drawStars)});
+addEventListener('resize',()=>{seedStars();updateLabels();if(reduceMotion)requestAnimationFrame(drawStars)});
 
 /* ---------------- svg build ---------------- */
 const svg=document.getElementById('map');
@@ -456,9 +481,9 @@ for(const [cid,cl] of Object.entries(CLUSTERS)){
 }
 const nodeEls={};
 for(const n of NODES){
-  const g=el('g',{class:'node',tabindex:0,role:'button','aria-label':n.n},gNodes);
+  const g=el('g',{class:'node'+(n.big?' big':''),tabindex:0,role:'button','aria-label':n.n},gNodes);
   const col=CLUSTERS[n.c].color, r=n.big?7:4.5;
-  el('circle',{cx:n.x,cy:n.y,r:20,fill:'transparent'},g);
+  el('circle',{cx:n.x,cy:n.y,r:20,fill:'transparent',class:'hit'},g);
   el('circle',{cx:n.x,cy:n.y,r:r*2.6,fill:col,class:'halo'},g);
   el('circle',{cx:n.x,cy:n.y,r:r,fill:col,class:'core'},g);
   const t=el('text',{x:n.x,y:n.y+r+13,'text-anchor':'middle'},g);
@@ -494,7 +519,22 @@ function fitInitial(){
   vb = mar ? {w:H*ar,h:H,x:-(H*ar-W)/2,y:0} : {w:W,h:W/ar,x:0,y:-(W/ar-H)/2};
   applyVB();
 }
-function applyVB(){svg.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`)}
+function applyVB(){
+  svg.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  updateLabels();
+}
+/* Keep labels legible at any zoom: when zoomed far out (small screens),
+   hide minor labels and scale system/flagship text to constant screen size.
+   Above the threshold, desktop rendering is untouched. */
+function updateLabels(){
+  const rw=svg.getBoundingClientRect().width||innerWidth;
+  const s=rw/vb.w;
+  const out=s<0.42;
+  svg.classList.toggle('zoomed-out',out);
+  svg.style.setProperty('--bigfs',out?Math.min(11/s,44)+'px':'10.5px');
+  svg.style.setProperty('--clusterfs',out?Math.min(13/s,52)+'px':'15px');
+  svg.style.setProperty('--hitr',out?Math.min(24/s,70)+'px':'20px');
+}
 function zoomAt(px,py,f){
   const r=svg.getBoundingClientRect();
   const mx=vb.x+(px-r.left)/r.width*vb.w, my=vb.y+(py-r.top)/r.height*vb.h;
@@ -503,22 +543,46 @@ function zoomAt(px,py,f){
   applyVB();
 }
 svg.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,e.deltaY>0?1.12:0.89)},{passive:false});
-let drag=null;
+/* one finger pans, two fingers pinch-zoom */
+const pts=new Map();
+let pinchDist=0;
 svg.addEventListener('pointerdown',e=>{
-  if(e.target.closest('.node'))return;
-  drag={x:e.clientX,y:e.clientY};svg.classList.add('dragging');svg.setPointerCapture(e.pointerId);
+  if(e.target.closest('.node')&&pts.size===0)return;
+  svg.setPointerCapture(e.pointerId);
+  pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pts.size===1)svg.classList.add('dragging');
+  if(pts.size===2){
+    const [a,b]=[...pts.values()];
+    pinchDist=Math.hypot(a.x-b.x,a.y-b.y);
+  }
 });
 svg.addEventListener('pointermove',e=>{
-  if(!drag)return;
+  if(!pts.has(e.pointerId))return;
+  const prev=pts.get(e.pointerId);
+  pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
   const r=svg.getBoundingClientRect();
-  vb.x-=(e.clientX-drag.x)/r.width*vb.w; vb.y-=(e.clientY-drag.y)/r.height*vb.h;
-  drag={x:e.clientX,y:e.clientY};applyVB();
+  if(pts.size===1){
+    vb.x-=(e.clientX-prev.x)/r.width*vb.w;
+    vb.y-=(e.clientY-prev.y)/r.height*vb.h;
+    applyVB();
+  }else if(pts.size===2){
+    const [a,b]=[...pts.values()];
+    const d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(pinchDist>0&&d>0)zoomAt((a.x+b.x)/2,(a.y+b.y)/2,pinchDist/d);
+    pinchDist=d;
+  }
 });
-addEventListener('pointerup',()=>{drag=null;svg.classList.remove('dragging')});
+const liftPointer=e=>{
+  pts.delete(e.pointerId);pinchDist=0;
+  if(!pts.size)svg.classList.remove('dragging');
+};
+addEventListener('pointerup',liftPointer);
+addEventListener('pointercancel',liftPointer);
 document.getElementById('zin').onclick=()=>zoomAt(innerWidth/2,innerHeight/2,0.8);
 document.getElementById('zout').onclick=()=>zoomAt(innerWidth/2,innerHeight/2,1.25);
 document.getElementById('zreset').onclick=fitInitial;
 function panTo(x,y,w){
+  if(innerWidth<640)w=Math.min(w,430); // zoom in closer on phones so labels are readable
   vb={x:x-w/2,y:y-(w*vb.h/vb.w)/2,w,h:w*vb.h/vb.w};applyVB();
 }
 fitInitial();
